@@ -23,17 +23,17 @@ jobs:
     runs-on: ["${{ matrix.os }}"]
     defaults:
       run:
-        working-directory: ./rpc-server
+        working-directory: ./solana-postgres-rpc-server
     steps:
     - uses: actions/checkout@v4
       with:
-        path: rpc-server
+        path: solana-postgres-rpc-server
 
     - name: Checkout solana-accountsdb-plugin-postgres to reference in build
       uses: actions/checkout@v4
       with:
         repository: 808putnam/solana-accountsdb-plugin-postgres
-        path: acountsdb
+        path: solana-accountsdb-plugin-postgres
 
     - uses: actions/cache@v4
       with:
