@@ -1,16 +1,18 @@
 /// The JSON request processor
 /// This takes the request from the client and load the information from the datastore.
 use {
+    // qtrade
+    // qtrade spl_token::solana_program::program_pack::Pack,
+    spl_token::solana_program::program_pack::Pack,
     crate::{
         postgres_client::{
-            postgres_client_account::AccountInfo, postgres_client_slot::DbSlotInfo, ServerResult,
-            AsyncPooledPostgresClient,
+            postgres_client_account::AccountInfo, postgres_client_slot::DbSlotInfo, AsyncPooledPostgresClient, ServerResult
         },
         postgres_rpc_server_error::PostgresRpcServerError,
         rpc::OptionalContext,
         rpc_service::JsonRpcConfig,
     },
-    jsonrpc_core::{types::error, types::Error, Metadata, Result},
+    jsonrpc_core::{types::{error, Error}, Metadata, Result},
     log::*,
     solana_account_decoder::{
         parse_account_data::AccountAdditionalData,
@@ -26,20 +28,37 @@ use {
         rpc_filter::{Memcmp, MemcmpEncodedBytes, RpcFilterType},
         rpc_response::{Response as RpcResponse, *},
     },
+    // qtrade
+    // see below for constants added
+    /*
     solana_runtime::inline_spl_token::{
         SPL_TOKEN_ACCOUNT_MINT_OFFSET, SPL_TOKEN_ACCOUNT_OWNER_OFFSET,
     },
+    */
+    /*
+    constant `SPL_TOKEN_ACCOUNT_MINT_OFFSET` is private
+private constantrustcClick for full compiler diagnostic
+state.rs(296, 1): the constant `SPL_TOKEN_ACCOUNT_MINT_OFFSET` is defined here
+    spl_token::state::{
+        SPL_TOKEN_ACCOUNT_MINT_OFFSET, SPL_TOKEN_ACCOUNT_OWNER_OFFSET,
+    },
+    */
+
     solana_sdk::{
         account::ReadableAccount,
         clock::Slot,
         commitment_config::{CommitmentConfig, CommitmentLevel},
-        program_pack::Pack,
+        // qtrade: program_pack::Pack,
         pubkey::{Pubkey, PUBKEY_BYTES},
     },
-    spl_token::state::{Account as TokenAccount, Mint},
+    spl_token::{state::{Account as TokenAccount, Mint}},
     std::sync::Arc,
     tokio::sync::RwLock,
 };
+
+// qtrade: added constants
+const SPL_TOKEN_ACCOUNT_MINT_OFFSET: usize = 0;
+const SPL_TOKEN_ACCOUNT_OWNER_OFFSET: usize = 32;
 
 type RpcCustomResult<T> = std::result::Result<T, RpcCustomError>;
 
@@ -229,6 +248,8 @@ fn filter_accounts(
             && filters.iter().all(|filter_type| match filter_type {
                 RpcFilterType::DataSize(size) => account.data().len() as u64 == *size,
                 RpcFilterType::Memcmp(compare) => compare.bytes_match(account.data()),
+                // qtrade
+                RpcFilterType::TokenAccountState => false,
             })
         {
             keyed_accounts.push(RpcKeyedAccount {
@@ -425,7 +446,8 @@ impl From<PostgresRpcServerError> for Error {
 }
 
 fn new_response<T>(slot: i64, value: T) -> RpcResponse<T> {
-    let context = RpcResponseContext { slot: slot as Slot };
+    // qtrade
+    let context = RpcResponseContext { slot: slot as Slot, api_version: None };
     Response { context, value }
 }
 
@@ -460,7 +482,8 @@ impl JsonRpcRequestProcessor {
         };
 
         Ok(RpcResponse {
-            context: RpcResponseContext { slot },
+            // qtrade
+            context: RpcResponseContext { slot, api_version: None },
             value: account.and_then(|account| Some(account.0)),
         })
     }
@@ -524,7 +547,8 @@ impl JsonRpcRequestProcessor {
         }
 
         Ok(RpcResponse {
-            context: RpcResponseContext { slot: 0 },
+            // qtrade
+            context: RpcResponseContext { slot: 0, api_version: None },
             value: accounts,
         })
     }

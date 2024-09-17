@@ -1,7 +1,9 @@
 /// Main entry for the PostgreSQL based RPC Server
 use {
     clap::{crate_description, crate_name, value_t, value_t_or_exit, App, Arg},
-    solana_clap_utils::input_validators::{is_niceness_adjustment_valid, is_parsable},
+    // qtrade
+    // solana_clap_utils::input_validators::{is_niceness_adjustment_valid, is_parsable},
+    solana_clap_utils::input_validators::is_parsable,
     solana_postgres_rpc_server::{
         postgres_client::AsyncPooledPostgresClient,
         postgres_rpc_server_config::PostgresRpcServerConfig,
@@ -130,7 +132,8 @@ pub async fn main() {
                 .long("rpc-niceness-adjustment")
                 .value_name("ADJUSTMENT")
                 .takes_value(true)
-                .validator(is_niceness_adjustment_valid)
+                // qtrade
+                // .validator(is_niceness_adjustment_valid)
                 .default_value("0")
                 .help(
                     "Add this value to niceness of RPC threads. Negative value \
