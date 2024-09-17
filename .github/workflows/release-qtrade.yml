@@ -24,13 +24,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        path: solana-postgres-rpc-server
+        path: rpc-server
 
-    - name: Checkout tools repo
+    - name: Checkout solana-accountsdb-plugin-postgres to reference in build
       uses: actions/checkout@v4
       with:
         repository: 808putnam/solana-accountsdb-plugin-postgres
-        path: solana-accountsdb-plugin-postgres
+        path: acountsdb
+
+    - name: Change to solana-postgres-rpc-server folder for remainder of steps
+      run: |
+        cd rpc-server
 
     - uses: actions/cache@v4
       with:
@@ -39,7 +43,7 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            ./target
+            rpc-server/target
         key: ${{ matrix.os }}-cargo-${{ hashFiles('rust-toolchain.toml') }}-${{ hashFiles('**/Cargo.lock') }}-0002
         restore-keys: |
           ${{ matrix.os }}-cargo-${{ hashFiles('rust-toolchain.toml') }}
@@ -68,7 +72,8 @@ jobs:
       run: |
         echo "CI_TAG=$(ci/getTag.sh)" >> "$GITHUB_ENV"
         echo "CI_OS_NAME=linux" >> "$GITHUB_ENV"
-         
+        
+        cd 
         SOLANA_VERSION="$(./ci/solana-version.sh)"
         echo "SOLANA_VERSION=$SOLANA_VERSION" >> "$GITHUB_ENV"
   
