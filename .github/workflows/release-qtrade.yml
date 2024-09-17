@@ -56,7 +56,7 @@ jobs:
       run: |
         source ci/env.sh
         echo "GEYSER_PLUGIN_NAME=$plugin_name" | tee -a $GITHUB_ENV
-        echo "GEYSER_PLUGIN_LIB=lib${plugin_lib_name}" | tee -a $GITHUB_ENV
+        echo "GEYSER_PLUGIN_LIB=${plugin_lib_name}" | tee -a $GITHUB_ENV
 
     - uses: dtolnay/rust-toolchain@stable
       with:

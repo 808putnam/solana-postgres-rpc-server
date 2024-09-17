@@ -72,7 +72,8 @@ mkdir -p "$installDir/lib"
   cargo $maybeRustVersion build $maybeReleaseFlag
 )
 
-cp -fv "target/$buildVariant/${GEYSER_PLUGIN_LIB}.$libExt" "$installDir"/lib/
+# qtrade: cp -fv "target/$buildVariant/${GEYSER_PLUGIN_LIB}.$libExt" "$installDir"/lib/
+cp -fv "target/$buildVariant/${GEYSER_PLUGIN_LIB}" "$installDir"/lib/
 
 echo "Done after $SECONDS seconds"
 
