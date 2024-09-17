@@ -73,7 +73,7 @@ mkdir -p "$installDir/lib"
 )
 
 # qtrade: cp -fv "target/$buildVariant/${GEYSER_PLUGIN_LIB}.$libExt" "$installDir"/lib/
-cp -fv "target/$buildVariant/${GEYSER_PLUGIN_LIB}" "$installDir"/lib/
+cp -fv "target/$buildVariant/${GEYSER_PLUGIN_NAME}" "$installDir"/lib/
 
 echo "Done after $SECONDS seconds"
 
