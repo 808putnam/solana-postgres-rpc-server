@@ -92,6 +92,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v2
       with:
+        working-directory: ./solana-postgres-rpc-server
         tag_name: ${{ env.BUILD_NAME }}
         body: |
           ${{ env.GEYSER_PLUGIN_NAME }} ${{ env.CI_TAG }}
